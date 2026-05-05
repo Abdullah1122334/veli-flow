@@ -925,6 +925,7 @@ const VeilFlow = {
 
         // تعريف المقاسات المحددة مسبقاً بالسنتيمتر
         const paperSizes = {
+            '40x60': { width: 4.0, height: 6.0 },
             '50x25': { width: 5.0, height: 2.5 },
             '50x40': { width: 5.0, height: 4.0 },
             '57x40': { width: 5.7, height: 4.0 },
