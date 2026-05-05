@@ -1,0 +1,688 @@
+/* =====================================================
+   VeilFlow - Enhanced Features CSS
+   Enhancements: Dark mode, Modal, Filters, Images, etc.
+   ===================================================== */
+
+/* ===================== Dark Mode ===================== */
+[data-theme="dark"] {
+    --primary: #059669;
+    --primary-light: #0d9b6e;
+    --secondary: #fbbf24;
+    --secondary-light: #fcd34d;
+    --accent: #10b981;
+    --accent-light: #34d399;
+
+    --dark: #f8fafc;
+    --dark-light: #e2e8f0;
+    --light: #0f172a;
+    --light-dark: #1e293b;
+
+    --success: #10b981;
+    --warning: #fbbf24;
+    --danger: #ef4444;
+    --info: #60a5fa;
+}
+
+[data-theme="dark"] body {
+    background: #0f172a;
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .sidebar {
+    background: linear-gradient(180deg, #1a472a 0%, #14532d 100%);
+}
+
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .recent-products,
+[data-theme="dark"] .product-form,
+[data-theme="dark"] .live-preview,
+[data-theme="dark"] .settings-form,
+[data-theme="dark"] .settings-preview,
+[data-theme="dark"] .products-table-container {
+    background: #1e293b;
+    color: #f8fafc;
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    background: #0f172a;
+    color: #f8fafc;
+    border-color: #334155;
+}
+
+[data-theme="dark"] .label-preview {
+    background: #1e293b;
+}
+
+/* ===================== Theme Toggle Button ===================== */
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.theme-toggle {
+    align-self: flex-start;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-md);
+    color: white;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 1rem;
+}
+
+.theme-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+[data-theme="dark"] .theme-toggle i::before {
+    content: "\f185";
+    /* fa-sun */
+}
+
+/* ===================== Modal Styles ===================== */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background: white;
+    padding: var(--spacing-2xl);
+    border-radius: var(--radius-xl);
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow: auto;
+    box-shadow: var(--shadow-xl);
+    animation: slideUp 0.3s ease;
+}
+
+[data-theme="dark"] .modal-content {
+    background: #1e293b;
+    color: #f8fafc;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--light-dark);
+}
+
+.modal-header h2 {
+    color: var(--primary);
+    font-size: 1.5rem;
+}
+
+.modal-close {
+    padding: var(--spacing-sm);
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--dark-light);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.modal-close:hover {
+    color: var(--danger);
+    transform: rotate(90deg);
+}
+
+.modal-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+}
+
+.modal-actions button {
+    flex: 1;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ===================== Advanced Filters Panel ===================== */
+.search-filter-container {
+    display: flex;
+    gap: var(--spacing-md);
+    flex: 1;
+}
+
+.filters-panel {
+    background: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    margin: var(--spacing-md) 0;
+    box-shadow: var(--shadow-md);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+    animation: slideDown 0.3s ease;
+}
+
+[data-theme="dark"] .filters-panel {
+    background: #1e293b;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.filter-group label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--dark-light);
+}
+
+.filter-group input,
+.filter-group select {
+    padding: var(--spacing-sm);
+    border: 2px solid var(--light-dark);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-arabic);
+}
+
+.filter-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+}
+
+/* ===================== Image Upload & Preview ===================== */
+.image-preview-container,
+.logo-preview-container {
+    position: relative;
+    margin-top: var(--spacing-md);
+    display: inline-block;
+}
+
+.image-preview,
+.logo-preview {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    display: block;
+}
+
+.btn-remove-image {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--danger);
+    color: white;
+    border: 2px solid white;
+    cursor: pointer;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.btn-remove-image:hover {
+    background: #dc2626;
+    transform: scale(1.1);
+}
+
+/* ===================== Colors Select ===================== */
+.colors-select {
+    height: 120px;
+    padding: var(--spacing-sm);
+}
+
+.colors-select option {
+    padding: var(--spacing-xs);
+}
+
+.form-group small {
+    font-size: 0.75rem;
+    color: var(--dark-light);
+    margin-top: var(--spacing-xs);
+}
+
+/* ===================== Toggle Switch ===================== */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-label {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: var(--transition);
+    border-radius: 30px;
+}
+
+.toggle-label:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    right: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: var(--transition);
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked+.toggle-label {
+    background-color: var(--accent);
+}
+
+.toggle-switch input:checked+.toggle-label:before {
+    transform: translateX(-30px);
+}
+
+/* ===================== Stock Status Badges ===================== */
+.stock-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.stock-available {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.stock-low {
+    background: #fed7aa;
+    color: #9a3412;
+}
+
+.stock-out {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+[data-theme="dark"] .stock-available {
+    background: #064e3b;
+    color: #6ee7b7;
+}
+
+[data-theme="dark"] .stock-low {
+    background: #78350f;
+    color: #fdba74;
+}
+
+[data-theme="dark"] .stock-out {
+    background: #7f1d1d;
+    color: #fca5a5;
+}
+
+/* ===================== Color Badges ===================== */
+.color-badges {
+    display: flex;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+}
+
+.color-badge {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    background: var(--light-dark);
+    color: var(--dark);
+    border: 1px solid var(--light-dark);
+}
+
+[data-theme="dark"] .color-badge {
+    background: #334155;
+    color: #f8fafc;
+}
+
+.measurement-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    max-width: 260px;
+}
+
+.measurement-chips span {
+    display: inline-block;
+    padding: 0.2rem 0.45rem;
+    border-radius: var(--radius-sm);
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+[data-theme="dark"] .measurement-chips span {
+    background: #064e3b;
+    color: #a7f3d0;
+    border-color: #047857;
+}
+
+/* ===================== Product Image in Table ===================== */
+.product-image-thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+.product-image-placeholder {
+    width: 60px;
+    height: 60px;
+    background: var(--light-dark);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--dark-light);
+    font-size: 1.5rem;
+}
+
+/* ===================== Quantity Controls ===================== */
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.quantity-btn {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--accent);
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.quantity-btn:hover {
+    background: var(--accent-light);
+    transform: scale(1.1);
+}
+
+.quantity-value {
+    font-weight: 700;
+    font-family: var(--font-english);
+    min-width: 40px;
+    text-align: center;
+}
+
+/* ===================== Loading States ===================== */
+.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 3px solid var(--light-dark);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===================== Improved Action Buttons ===================== */
+.action-buttons {
+    display: flex;
+    gap: var(--spacing-xs);
+    justify-content: center;
+}
+
+.btn-icon-with-text {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: none;
+    background: var(--light);
+    color: var(--dark);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-family: var(--font-arabic);
+    transition: var(--transition);
+}
+
+.btn-icon-with-text:hover {
+    background: var(--light-dark);
+    transform: translateY(-2px);
+}
+
+.btn-icon-with-text.btn-edit {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.btn-icon-with-text.btn-edit:hover {
+    background: #bfdbfe;
+}
+
+.btn-icon-with-text.btn-copy {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+.btn-icon-with-text.btn-copy:hover {
+    background: #c7d2fe;
+}
+
+/* ===================== Responsive Enhancements ===================== */
+@media (max-width: 1024px) {
+    .filters-panel {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .filters-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .search-filter-container {
+        flex-direction: column;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: var(--spacing-lg);
+    }
+}
+
+/* ===================== Improved Table для новых столбцов ===================== */
+.products-table td {
+    vertical-align: middle;
+}
+
+/* ===================== Barcode Container ===================== */
+.barcode-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.barcode-container svg,
+.barcode-container canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ===================== PDF Export Preview ===================== */
+.pdf-preview-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+}
+
+.pdf-preview-content {
+    background: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: auto;
+}
+
+.pdf-canvas {
+    width: 100%;
+    border: 1px solid var(--light-dark);
+    margin: var(--spacing-md) 0;
+}
+
+/* ===================== Success/Error Messages Enhancement ===================== */
+.notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    z-index: 10000;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    animation: slideDown 0.3s ease;
+    min-width: 300px;
+}
+
+.notification.success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.notification.error {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+.notification.info {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+}
+
+.notification.warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+}
+
+.notification i {
+    font-size: 1.25rem;
+}
+
+/* ===================== Enhanced Empty States ===================== */
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-2xl);
+    color: var(--dark-light);
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: var(--light-dark);
+    margin-bottom: var(--spacing-md);
+    opacity: 0.5;
+}
+
+.empty-state p {
+    font-size: 1.125rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.empty-state-with-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+}

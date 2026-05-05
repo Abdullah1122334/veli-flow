@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeilFlow - إدارة المنتجات والملصقات الذكية</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- JsBarcode Library -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+    <!-- jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/enhanced.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="فتح القائمة">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="logo-container">
+            <div class="logo">
+                <i class="fas fa-qrcode"></i>
+                <h1>VeilFlow</h1>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="#dashboard" class="nav-item active" data-section="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>لوحة التحكم</span>
+                </a>
+                <a href="#add-product" class="nav-item" data-section="add-product">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>إضافة منتج</span>
+                </a>
+                <a href="#labels-gallery" class="nav-item" data-section="labels-gallery">
+                    <i class="fas fa-tags"></i>
+                    <span>معرض الملصقات</span>
+                </a>
+                <a href="#print-settings" class="nav-item" data-section="print-settings">
+                    <i class="fas fa-cog"></i>
+                    <span>إعدادات الطباعة</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-secondary" id="exportData">
+                    <i class="fas fa-download"></i>
+                    <span>تصدير البيانات</span>
+                </button>
+                <button class="btn-secondary" id="importData">
+                    <i class="fas fa-upload"></i>
+                    <span>استيراد البيانات</span>
+                </button>
+            </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-section active">
+            <div class="section-header">
+                <h2>لوحة التحكم</h2>
+                <p>نظرة عامة على منتجاتك وملصقاتك</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #059669, #10b981);">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalProducts">0</h3>
+                        <p>إجمالي المنتجات</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #c9a961, #d4af37);">
+                        <i class="fas fa-print"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="todayPrints">0</h3>
+                        <p>الملصقات المطبوعة اليوم</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #1a472a, #2d5a3d);">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalLabels">0</h3>
+                        <p>إجمالي الملصقات</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #7c3aed, #a855f7);">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="thisMonth">0</h3>
+                        <p>منتجات هذا الشهر</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recent-products">
+                <h3>آخر المنتجات المضافة</h3>
+                <div class="products-list" id="recentProductsList">
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>لا توجد منتجات بعد</p>
+                        <button class="btn-primary" onclick="navigateTo('add-product')">إضافة منتج جديد</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add Product Section -->
+        <section id="add-product" class="content-section">
+            <div class="section-header">
+                <h2>إضافة منتج جديد</h2>
+                <p>أدخل بيانات المنتج وشاهد المعاينة الحية</p>
+            </div>
+
+            <div class="add-product-container">
+                <div class="product-form">
+                    <form id="productForm">
+                        <div class="form-group">
+                            <label for="productName">
+                                <i class="fas fa-tag"></i>
+                                اسم المنتج
+                            </label>
+                            <input type="text" id="productName" placeholder="مثال: نقاب وسط مطاطي" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="productPrice">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    السعر (ر.س)
+                                </label>
+                                <input type="number" id="productPrice" placeholder="180" step="0.01" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="productCategory">
+                                    <i class="fas fa-folder"></i>
+                                    الفئة
+                                </label>
+                                <select id="productCategory" required>
+                                    <option value="">اختر الفئة</option>
+                                    <option value="V">V - نقاب (Veil)</option>
+                                    <option value="S">S - ستايل (Style)</option>
+                                    <option value="A">A - إكسسوارات (Accessories)</option>
+                                    <option value="C">C - عباءات (Cloaks)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productFabric">
+                                <i class="fas fa-tshirt"></i>
+                                نوع القماش
+                            </label>
+                            <select id="productFabric" required>
+                                <option value="">اختر نوع القماش</option>
+                                <option value="F">F - قماش (Fabric)</option>
+                                <option value="C">C - قطن (Cotton)</option>
+                                <option value="S">S - معدني (Steel)</option>
+                                <option value="P">P - بوليستر (Polyester)</option>
+                                <option value="M">M - مخلوط (Mixed)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productImage">
+                                <i class="fas fa-image"></i>
+                                صورة المنتج (اختياري)
+                            </label>
+                            <input type="file" id="productImage" accept="image/*">
+                            <div id="imagePreviewContainer" class="image-preview-container" style="display: none;">
+                                <img id="imagePreview" class="image-preview" alt="معاينة">
+                                <button type="button" class="btn-remove-image" onclick="VeilFlow.removeImage()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="productColors">
+                                <i class="fas fa-palette"></i>
+                                الألوان المتوفرة (اختياري)
+                            </label>
+                            <select id="productColors" multiple class="colors-select">
+                                <option value="أسود">أسود</option>
+                                <option value="أبيض">أبيض</option>
+                                <option value="كحلي">كحلي</option>
+                                <option value="بني">بني</option>
+                                <option value="رمادي">رمادي</option>
+                                <option value="بيج">بيج</option>
+                                <option value="وردي">وردي</option>
+                                <option value="أزرق">أزرق</option>
+                            </select>
+                            <small>اضغط Ctrl للاختيار المتعدد</small>
+                        </div>
+
+                        <div class="measurements-section">
+                            <h4>
+                                <i class="fas fa-ruler-combined"></i>
+                                مقاسات الثوب
+                            </h4>
+                            <div class="measurements-grid">
+                                <div class="form-group">
+                                    <label for="productLength">مقاس الطول</label>
+                                    <input type="text" id="productLength" inputmode="decimal" placeholder="مثال: 150">
+                                </div>
+                                <div class="form-group">
+                                    <label for="productWidth">مقاس العرض</label>
+                                    <input type="text" id="productWidth" inputmode="decimal" placeholder="مثال: 60">
+                                </div>
+                                <div class="form-group">
+                                    <label for="productSleeve">مقاس الكم</label>
+                                    <input type="text" id="productSleeve" inputmode="decimal" placeholder="مثال: 58">
+                                </div>
+                                <div class="form-group">
+                                    <label for="productShoulder">مقاس الكتف</label>
+                                    <input type="text" id="productShoulder" inputmode="decimal" placeholder="مثال: 42">
+                                </div>
+                                <div class="form-group">
+                                    <label for="productCollar">مقاس الياقة</label>
+                                    <input type="text" id="productCollar" inputmode="decimal" placeholder="مثال: 38">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="productQuantity">
+                                    <i class="fas fa-boxes"></i>
+                                    الكمية المتوفرة
+                                </label>
+                                <input type="number" id="productQuantity" value="0" min="0">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="productMinQuantity">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    الحد الأدنى للتنبيه
+                                </label>
+                                <input type="number" id="productMinQuantity" value="5" min="0">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="codeType">
+                                <i class="fas fa-qrcode"></i>
+                                نوع الكود
+                            </label>
+                            <select id="codeType">
+                                <option value="qr">QR Code</option>
+                                <option value="barcode">Barcode</option>
+                                <option value="both">كلاهما</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-barcode"></i>
+                                كود المنتج (SKU)
+                            </label>
+                            <div class="sku-preview" id="skuPreview">سيتم التوليد تلقائياً</div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-save"></i>
+                                حفظ وتوليد الملصق
+                            </button>
+                            <button type="reset" class="btn-secondary">
+                                <i class="fas fa-redo"></i>
+                                إعادة تعيين
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="live-preview">
+                    <h3>المعاينة الحية</h3>
+                    <div class="preview-container">
+                        <div class="label-preview" id="labelPreview"
+                            style="width: 10cm; height: 15cm; display: flex; flex-direction: column; border: 1px solid #ddd; background: white; padding: 0.35cm; box-sizing: border-box;">
+                            <div class="product-name"
+                                style="text-align: center; font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 0.35cm; font-family: 'Cairo', sans-serif;">
+                                اسم المنتج</div>
+                            <div class="preview-measurements" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.18cm; margin-bottom: 0.35cm; font-family: 'Cairo', sans-serif;">
+                                <div class="preview-measurement-item">
+                                    <span>الطول</span>
+                                    <strong data-measurement="length">---</strong>
+                                </div>
+                                <div class="preview-measurement-item">
+                                    <span>العرض</span>
+                                    <strong data-measurement="width">---</strong>
+                                </div>
+                                <div class="preview-measurement-item">
+                                    <span>الكم</span>
+                                    <strong data-measurement="sleeve">---</strong>
+                                </div>
+                                <div class="preview-measurement-item">
+                                    <span>الكتف</span>
+                                    <strong data-measurement="shoulder">---</strong>
+                                </div>
+                                <div class="preview-measurement-item">
+                                    <span>الياقة</span>
+                                    <strong data-measurement="collar">---</strong>
+                                </div>
+                            </div>
+                            <div
+                                style="flex: 1; display: flex; align-items: center; justify-content: center; margin: 0.2cm 0;">
+                                <div id="previewBarcode"
+                                    style="width: 100%; height: auto; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-barcode" style="font-size: 3rem; color: #94a3b8;"></i>
+                                </div>
+                            </div>
+                            <div
+                                style="display: flex; justify-content: space-between; font-size: 14px; padding-top: 0.2cm; border-top: 1px solid #e2e8f0;">
+                                <div class="sku-text"
+                                    style="font-family: 'Inter', monospace; color: #64748b; font-weight: 600;">---</div>
+                                <div class="product-price"
+                                    style="font-family: 'Inter', sans-serif; color: #059669; font-weight: 700;">--- ر.س
+                                </div>
+                            </div>
+                        </div>
+                        <div class="preview-info">
+                            <small>المقاس الفعلي: 10 × 15 سم</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Labels Gallery Section -->
+        <section id="labels-gallery" class="content-section">
+            <div class="section-header">
+                <h2>معرض الملصقات</h2>
+                <p>جميع منتجاتك وملصقاتها</p>
+            </div>
+
+            <div class="gallery-controls">
+                <div class="search-filter-container">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchProducts" placeholder="ابحث عن منتج...">
+                    </div>
+
+                    <button class="btn-secondary" id="toggleFilters">
+                        <i class="fas fa-filter"></i>
+                        فلاتر متقدمة
+                    </button>
+                </div>
+
+                <div class="bulk-actions">
+                    <button class="btn-primary" id="printSelected" disabled>
+                        <i class="fas fa-print"></i>
+                        طباعة المحدد (<span id="selectedCount">0</span>)
+                    </button>
+                    <button class="btn-secondary" id="selectAll">
+                        <i class="fas fa-check-double"></i>
+                        تحديد الكل
+                    </button>
+                    <button class="btn-primary" id="exportPDF" disabled>
+                        <i class="fas fa-file-pdf"></i>
+                        تصدير PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- Advanced Filters Panel -->
+            <div class="filters-panel" id="filtersPanel" style="display: none;">
+                <div class="filter-group">
+                    <label>الفئة</label>
+                    <select id="filterCategory">
+                        <option value="">الكل</option>
+                        <option value="V">نقاب</option>
+                        <option value="S">ستايل</option>
+                        <option value="A">إكسسوارات</option>
+                        <option value="C">عباءات</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>نوع القماش</label>
+                    <select id="filterFabric">
+                        <option value="">الكل</option>
+                        <option value="F">قماش</option>
+                        <option value="C">قطن</option>
+                        <option value="S">معدني</option>
+                        <option value="P">بوليستر</option>
+                        <option value="M">مخلوط</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>السعر من</label>
+                    <input type="number" id="filterPriceMin" placeholder="0">
+                </div>
+
+                <div class="filter-group">
+                    <label>السعر إلى</label>
+                    <input type="number" id="filterPriceMax" placeholder="1000">
+                </div>
+
+                <div class="filter-group">
+                    <label>حالة المخزون</label>
+                    <select id="filterStock">
+                        <option value="">الكل</option>
+                        <option value="available">متوفر</option>
+                        <option value="low">قارب على النفاد</option>
+                        <option value="out">نفد</option>
+                    </select>
+                </div>
+
+                <div class="filter-actions">
+                    <button class="btn-primary" id="applyFilters">
+                        <i class="fas fa-check"></i>
+                        تطبيق
+                    </button>
+                    <button class="btn-secondary" id="resetFilters">
+                        <i class="fas fa-redo"></i>
+                        إعادة ضبط
+                    </button>
+                </div>
+            </div>
+
+            <div class="products-table-container">
+                <table class="products-table" id="productsTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAllCheckbox"></th>
+                            <th>الصورة</th>
+                            <th>اسم المنتج</th>
+                            <th>السعر</th>
+                            <th>كود SKU</th>
+                            <th>الفئة</th>
+                            <th>القماش</th>
+                            <th>الكمية</th>
+                            <th>الألوان</th>
+                            <th>المقاسات</th>
+                            <th>التاريخ</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody">
+                        <tr>
+                            <td colspan="12" class="empty-state">
+                                <i class="fas fa-inbox"></i>
+                                <p>لا توجد منتجات لعرضها</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Print Settings Section -->
+        <section id="print-settings" class="content-section">
+            <div class="section-header">
+                <h2>إعدادات الطباعة</h2>
+                <p>اضبط إعدادات الطباعة للحصول على أفضل النتائج</p>
+            </div>
+
+            <div class="settings-container">
+                <div class="settings-form">
+                    <div class="form-group">
+                        <label for="shopName">
+                            <i class="fas fa-store"></i>
+                            اسم المحل
+                        </label>
+                        <input type="text" id="shopName" placeholder="متجر الأناقة">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="labelTemplate">
+                            <i class="fas fa-paint-brush"></i>
+                            تصميم الملصق
+                        </label>
+                        <select id="labelTemplate">
+                            <option value="classic">كلاسيكي - Classic</option>
+                            <option value="modernElegant">عصري أنيق - Modern Elegant</option>
+                            <option value="premium">بريميوم ذهبي - Premium Gold</option>
+                            <option value="minimalist">بسيط نظيف - Minimalist</option>
+                            <option value="colorful">ملون - Colorful Brand</option>
+                        </select>
+                        <small style="color: #64748b; font-size: 0.75rem; margin-top: 0.25rem; display: block;">اختر
+                            التصميم المناسب لملصقاتك</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="shopLogo">
+                            <i class="fas fa-image"></i>
+                            شعار المحل
+                        </label>
+                        <input type="file" id="shopLogo" accept="image/*">
+                        <div id="logoPreviewContainer" class="logo-preview-container" style="display: none;">
+                            <img id="logoPreview" class="logo-preview" alt="الشعار">
+                            <button type="button" class="btn-remove-image" onclick="VeilFlow.removeLogo()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-eye"></i>
+                            إظهار الشعار على الملصق
+                        </label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="showLogoOnLabel">
+                            <label for="showLogoOnLabel" class="toggle-label"></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="paperSize">
+                            <i class="fas fa-ruler-combined"></i>
+                            مقاس الورق
+                        </label>
+                        <select id="paperSize">
+                            <option value="50x25">50 × 25 مم</option>
+                            <option value="50x40">50 × 40 مم</option>
+                            <option value="57x40">57 × 40 مم (حراري شائع)</option>
+                            <option value="60x40">60 × 40 مم</option>
+                            <option value="100x100">100 × 100 مم (مربع)</option>
+                            <option value="100x150" selected>100 × 150 مم (10 × 15 سم)</option>
+                            <option value="custom">مخصص (Custom)</option>
+                        </select>
+                        <small style="color: #64748b; font-size: 0.75rem; margin-top: 0.25rem; display: block;">اختر
+                            مقاساً محدداً أو استخدم المقاس المخصص</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-ruler"></i>
+                            حجم الملصق (مخصص)
+                        </label>
+                        <div class="form-row">
+                            <input type="number" id="labelWidth" value="5" step="0.1">
+                            <span>سم (عرض)</span>
+                            <input type="number" id="labelHeight" value="2.5" step="0.1">
+                            <span>سم (ارتفاع)</span>
+                        </div>
+                        <small style="color: #64748b; font-size: 0.75rem; margin-top: 0.25rem; display: block;">سيتم
+                            تعطيل هذا عند اختيار مقاس محدد مسبقاً</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-file"></i>
+                            نوع الورق
+                        </label>
+                        <select id="paperType">
+                            <option value="a4">A4 (21 × 29.7 سم)</option>
+                            <option value="thermal">طابعة حرارية</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-border-style"></i>
+                            الهوامش (مم)
+                        </label>
+                        <div class="margins-grid">
+                            <div>
+                                <label>أعلى</label>
+                                <input type="number" id="marginTop" value="10">
+                            </div>
+                            <div>
+                                <label>يمين</label>
+                                <input type="number" id="marginRight" value="10">
+                            </div>
+                            <div>
+                                <label>أسفل</label>
+                                <input type="number" id="marginBottom" value="10">
+                            </div>
+                            <div>
+                                <label>يسار</label>
+                                <input type="number" id="marginLeft" value="10">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-text-height"></i>
+                            حجم الخط
+                        </label>
+                        <div class="form-row">
+                            <input type="range" id="fontSize" min="8" max="14" value="10">
+                            <span id="fontSizeValue">10px</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn-primary" id="saveSettings">
+                            <i class="fas fa-save"></i>
+                            حفظ الإعدادات
+                        </button>
+                        <button class="btn-secondary" id="resetSettings">
+                            <i class="fas fa-undo"></i>
+                            إعادة للافتراضي
+                        </button>
+                    </div>
+                </div>
+
+                <div class="settings-preview">
+                    <h3>معاينة الطباعة</h3>
+                    <div class="a4-preview" id="a4Preview">
+                        <div class="a4-page">
+                            <p class="preview-text">معاينة نمط الطباعة على ورق A4</p>
+                            <div class="labels-grid" id="previewLabelsGrid">
+                                <!-- سيتم ملؤها بالـ JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Edit Product Modal -->
+    <div id="editModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>تعديل المنتج</h2>
+                <button class="modal-close" onclick="VeilFlow.closeEditModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editProductForm">
+                <input type="hidden" id="editProductId">
+                <div class="form-group">
+                    <label for="editProductName">اسم المنتج</label>
+                    <input type="text" id="editProductName" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editProductPrice">السعر</label>
+                        <input type="number" id="editProductPrice" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editProductQuantity">الكمية</label>
+                        <input type="number" id="editProductQuantity" min="0">
+                    </div>
+                </div>
+                <div class="measurements-section">
+                    <h4>
+                        <i class="fas fa-ruler-combined"></i>
+                        مقاسات الثوب
+                    </h4>
+                    <div class="measurements-grid">
+                        <div class="form-group">
+                            <label for="editProductLength">مقاس الطول</label>
+                            <input type="text" id="editProductLength" inputmode="decimal">
+                        </div>
+                        <div class="form-group">
+                            <label for="editProductWidth">مقاس العرض</label>
+                            <input type="text" id="editProductWidth" inputmode="decimal">
+                        </div>
+                        <div class="form-group">
+                            <label for="editProductSleeve">مقاس الكم</label>
+                            <input type="text" id="editProductSleeve" inputmode="decimal">
+                        </div>
+                        <div class="form-group">
+                            <label for="editProductShoulder">مقاس الكتف</label>
+                            <input type="text" id="editProductShoulder" inputmode="decimal">
+                        </div>
+                        <div class="form-group">
+                            <label for="editProductCollar">مقاس الياقة</label>
+                            <input type="text" id="editProductCollar" inputmode="decimal">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i>
+                        حفظ التعديلات
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="VeilFlow.closeEditModal()">
+                        <i class="fas fa-times"></i>
+                        إلغاء
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Print Area (Hidden) -->
+    <div id="printArea" class="print-area"></div>
+
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- Custom Scripts -->
+    <script src="js/storage.js"></script>
+    <script src="js/label-templates.js"></script>
+    <script src="js/label-generator.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
