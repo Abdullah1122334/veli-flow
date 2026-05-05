@@ -707,46 +707,70 @@ button:disabled {
         margin: 0;
     }
 
+    html,
     body {
-        margin: 0;
-        padding: 0;
+        width: 10cm !important;
+        min-width: 10cm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+        overflow: visible !important;
     }
 
     body * {
-        visibility: hidden;
+        visibility: hidden !important;
     }
 
     .print-area,
     .print-area * {
-        visibility: visible;
+        visibility: visible !important;
     }
 
     /* حاوية الطباعة - كل ملصق على ورقة منفصلة */
     .print-area {
-        position: absolute;
-        right: 0;
-        top: 0;
-        width: 100%;
-        margin: 0;
-        padding: 0;
+        position: absolute !important;
+        right: 0 !important;
+        top: 0 !important;
+        width: 10cm !important;
+        margin: 0 !important;
+        padding: 0 !important;
         display: block !important;
+        overflow: visible !important;
+        background: #fff !important;
     }
 
     /* كل ملصق على ورقة منفصلة */
     .print-label {
         width: 10cm !important;
         height: 15cm !important;
+        max-width: 10cm !important;
+        max-height: 15cm !important;
         margin: 0 !important;
-        page-break-after: always;
-        page-break-inside: avoid;
-        display: flex !important;
-        border: none !important;
-        box-sizing: border-box;
+        break-after: page !important;
+        page-break-after: always !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
 
     /* آخر ملصق بدون كسر صفحة */
     .print-label:last-child {
-        page-break-after: auto;
+        break-after: auto !important;
+        page-break-after: auto !important;
+    }
+
+    .print-label,
+    .print-label * {
+        color: #000 !important;
+        text-shadow: none !important;
+        box-sizing: border-box !important;
+    }
+
+    .print-label svg {
+        shape-rendering: crispEdges !important;
     }
 
     .print-label .label-left {
