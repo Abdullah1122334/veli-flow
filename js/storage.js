@@ -140,8 +140,9 @@ const VeilStorage = {
         const oldDefaultPaper = settings.paperSize === 'custom' &&
             Number(settings.labelWidth) === 5 &&
             Number(settings.labelHeight) === 2.5;
+        const oldDefaultTemplate = !settings.labelTemplate || settings.labelTemplate === 'classic';
 
-        if (!settings.garmentMeasurementsUpdateApplied) {
+        if (!settings.garmentMeasurementsUpdateApplied || !settings.thermalPrintUpdateApplied) {
             const updated = {
                 ...settings,
                 ...(oldDefaultPaper ? {
@@ -150,7 +151,11 @@ const VeilStorage = {
                     paperSize: '100x150',
                     paperType: 'thermal'
                 } : {}),
-                garmentMeasurementsUpdateApplied: true
+                ...(!settings.thermalPrintUpdateApplied && oldDefaultTemplate ? {
+                    labelTemplate: 'thermalGarment'
+                } : {}),
+                garmentMeasurementsUpdateApplied: true,
+                thermalPrintUpdateApplied: true
             };
             this.setData(this.KEYS.SETTINGS, updated);
             return updated;
@@ -176,18 +181,19 @@ const VeilStorage = {
         return {
             labelWidth: 10,
             labelHeight: 15,
-            paperSize: '100x150', // المقاس المحدد: 50x25, 57x40, 60x40, 50x40, 100x150, 100x100، أو custom
+            paperSize: '100x150', // المقاس المحدد: 40x60, 50x25, 57x40, 60x40, 50x40, 100x150, 100x100، أو custom
             paperType: 'thermal',
             marginTop: 10,
             marginRight: 10,
             marginBottom: 10,
             marginLeft: 10,
             fontSize: 10,
-            labelTemplate: 'classic',
+            labelTemplate: 'thermalGarment',
             shopName: '',
             shopLogo: '',
             showLogoOnLabel: false,
-            garmentMeasurementsUpdateApplied: true
+            garmentMeasurementsUpdateApplied: true,
+            thermalPrintUpdateApplied: true
         };
     },
 
