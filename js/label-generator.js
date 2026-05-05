@@ -5,7 +5,7 @@
 
 const LabelGenerator = {
     // Current selected template (can be changed from settings)
-    currentTemplate: 'classic', // classic, modernElegant, premium, minimalist, colorful
+    currentTemplate: 'thermalGarment',
 
     generateSKU(category, fabric) {
         const year = new Date().getFullYear().toString().slice(-2);
@@ -19,26 +19,31 @@ const LabelGenerator = {
         if (!container) return;
 
         container.innerHTML = '';
-        const canvas = document.createElement('canvas');
-        canvas.id = containerId + '_canvas';
-        
-        // تعديل لتنسيق الباركود وجعله مرناً داخل الحاوية [تحسين]
-        canvas.style.maxWidth = '100%';
-        canvas.style.height = 'auto';
-        container.appendChild(canvas);
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.id = containerId + '_svg';
+        svg.setAttribute('role', 'img');
+        svg.setAttribute('aria-label', data);
+        svg.style.width = '100%';
+        svg.style.height = 'auto';
+        svg.style.maxWidth = '100%';
+        svg.style.maxHeight = '100%';
+        svg.style.display = 'block';
+        svg.style.shapeRendering = 'crispEdges';
+        container.appendChild(svg);
 
         try {
             const settings = VeilStorage.getSettings();
             const isLargeLabel = (settings.labelHeight || 0) >= 8;
-            JsBarcode(canvas, data, {
+            JsBarcode(svg, data, {
                 format: "CODE128",
                 width: isLargeLabel ? 2 : 1.5,
-                height: isLargeLabel ? 90 : 40,
+                height: isLargeLabel ? 120 : 48,
                 displayValue: false,
                 margin: 0,        // إلغاء الهوامش الداخلية للباركود لمنع القص
                 background: "#ffffff",
                 lineColor: "#000000"
             });
+            svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
         } catch (error) {
             console.error('Error generating barcode:', error);
             container.innerHTML = '<div style="font-size: 8px;">خطأ</div>';
@@ -104,6 +109,8 @@ const LabelGenerator = {
         if (!printArea) return;
 
         const settings = VeilStorage.getSettings();
+        const labelWidth = settings.labelWidth || 10;
+        const labelHeight = settings.labelHeight || 15;
         printArea.innerHTML = '';
 
         // إنشاء حاوية الطباعة - تم تغييرها لـ block لإصلاح تكرار الورق الأبيض [تحسين]
@@ -111,7 +118,8 @@ const LabelGenerator = {
         container.style.cssText = `
             padding: 0;
             margin: 0;
-            display: block; 
+            display: block;
+            width: ${labelWidth}cm;
         `;
 
         products.forEach(product => {
@@ -122,7 +130,15 @@ const LabelGenerator = {
             // ضبط كل ملصق ليأخذ ورقة واحدة فقط في الطابعة الحرارية
             const labelElement = labelDiv.firstElementChild;
             labelElement.style.margin = '0';
-            labelElement.style.border = 'none';
+            labelElement.style.width = `${labelWidth}cm`;
+            labelElement.style.height = `${labelHeight}cm`;
+            labelElement.style.maxWidth = `${labelWidth}cm`;
+            labelElement.style.maxHeight = `${labelHeight}cm`;
+            labelElement.style.boxSizing = 'border-box';
+            labelElement.style.overflow = 'hidden';
+            labelElement.style.breakInside = 'avoid';
+            labelElement.style.pageBreakInside = 'avoid';
+            labelElement.style.breakAfter = 'page';
             labelElement.style.pageBreakAfter = 'always'; // إجبار الطابعة على إنهاء الصفحة بعد كل ملصق
             
             container.appendChild(labelElement);
@@ -322,11 +338,64 @@ const LabelGenerator = {
                     size: ${width}cm ${height}cm;
                     margin: 0;
                 }
-                body { margin: 0; padding: 0; }
-                #printArea { width: 100%; margin: 0; padding: 0; }
+                html,
+                body {
+                    width: ${width}cm !important;
+                    min-width: ${width}cm !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    background: #fff !important;
+                    overflow: visible !important;
+                }
+                body * {
+                    visibility: hidden !important;
+                }
+                #printArea,
+                #printArea * {
+                    visibility: visible !important;
+                }
+                #printArea {
+                    position: absolute !important;
+                    top: 0 !important;
+                    right: 0 !important;
+                    width: ${width}cm !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    overflow: visible !important;
+                    background: #fff !important;
+                }
+                #printArea > div {
+                    width: ${width}cm !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
                 #printArea .print-label {
                     width: ${width}cm !important;
                     height: ${height}cm !important;
+                    max-width: ${width}cm !important;
+                    max-height: ${height}cm !important;
+                    margin: 0 !important;
+                    box-sizing: border-box !important;
+                    overflow: hidden !important;
+                    break-inside: avoid !important;
+                    page-break-inside: avoid !important;
+                    break-after: page !important;
+                    page-break-after: always !important;
+                    -webkit-print-color-adjust: exact !important;
+                    print-color-adjust: exact !important;
+                }
+                #printArea .print-label:last-child {
+                    break-after: auto !important;
+                    page-break-after: auto !important;
+                }
+                #printArea .print-label,
+                #printArea .print-label * {
+                    color: #000 !important;
+                    text-shadow: none !important;
+                    box-sizing: border-box !important;
+                }
+                #printArea svg {
+                    shape-rendering: crispEdges !important;
                 }
             }
         `;
