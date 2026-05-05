@@ -71,6 +71,121 @@ const LabelTemplates = {
     },
 
     /**
+     * Thermal garment label - optimized for one thermal sticker page
+     */
+    thermalGarment(product, barcodeId, settings) {
+        const width = settings.labelWidth || 10;
+        const height = settings.labelHeight || 15;
+        const entries = this.getMeasurementEntries(product);
+        const isCompact = height < 8;
+        const padding = isCompact ? '0.16cm' : '0.34cm';
+        const gap = isCompact ? '0.07cm' : '0.18cm';
+        const nameSize = isCompact ? '9px' : '18px';
+        const headingSize = isCompact ? '8px' : '14px';
+        const labelSize = isCompact ? '7px' : '12px';
+        const valueSize = isCompact ? '8px' : '14px';
+        const priceSize = isCompact ? '10px' : '22px';
+        const skuSize = isCompact ? '7px' : '12px';
+
+        return `
+            <div class="print-label thermal-label" style="
+                width: ${width}cm;
+                height: ${height}cm;
+                display: grid;
+                grid-template-rows: auto auto minmax(0, 1fr) auto;
+                gap: ${gap};
+                border: 1px solid #111;
+                background: #fff;
+                color: #000;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                overflow: hidden;
+                padding: ${padding};
+                box-sizing: border-box;
+                font-family: Arial, Tahoma, sans-serif;
+                direction: rtl;
+            ">
+                <div style="
+                    text-align: center;
+                    font-size: ${nameSize};
+                    font-weight: 800;
+                    line-height: 1.25;
+                    color: #000;
+                    overflow: hidden;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                ">
+                    ${product.name}
+                </div>
+
+                ${entries.length ? `
+                    <div style="
+                        border: 1px solid #111;
+                        padding: ${isCompact ? '0.06cm' : '0.16cm'};
+                        overflow: hidden;
+                    ">
+                        <div style="
+                            text-align: center;
+                            font-size: ${headingSize};
+                            font-weight: 800;
+                            color: #000;
+                            margin-bottom: ${isCompact ? '0.04cm' : '0.12cm'};
+                        ">
+                            مقاسات الثوب
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: ${isCompact ? '0.04cm' : '0.1cm'};">
+                            ${entries.map(item => `
+                                <div style="
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: space-between;
+                                    gap: 0.08cm;
+                                    min-width: 0;
+                                    border-bottom: 1px solid #d1d5db;
+                                    padding-bottom: ${isCompact ? '0.02cm' : '0.05cm'};
+                                ">
+                                    <span style="font-size: ${labelSize}; color: #111; white-space: nowrap;">${item.label}</span>
+                                    <strong style="font-size: ${valueSize}; color: #000; white-space: nowrap; font-family: Arial, Tahoma, sans-serif;">${item.value}</strong>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <div style="
+                    min-height: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border: 1px solid #111;
+                    padding: ${isCompact ? '0.08cm' : '0.22cm'};
+                    overflow: hidden;
+                ">
+                    <div id="${barcodeId}" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden;"></div>
+                </div>
+
+                <div style="
+                    display: grid;
+                    grid-template-columns: minmax(0, 1fr) auto;
+                    gap: ${gap};
+                    align-items: center;
+                    border-top: 2px solid #111;
+                    padding-top: ${isCompact ? '0.05cm' : '0.16cm'};
+                    min-height: 0;
+                ">
+                    <div style="font-size: ${skuSize}; color: #000; font-weight: 700; direction: ltr; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        ${product.sku}
+                    </div>
+                    <div style="font-size: ${priceSize}; color: #000; font-weight: 900; white-space: nowrap;">
+                        ${product.price} ر.س
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
+    /**
      * Template 1: Classic - Full Text with Logo
      */
     classic(product, barcodeId, settings) {
